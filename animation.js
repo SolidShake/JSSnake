@@ -3,7 +3,7 @@ window.onload = function() {
   var w = canvas.width;
   var h = canvas.height;
 
-  var score;
+  var score = 0;
   //var food
   var dir;
   var size = 10;
@@ -22,7 +22,7 @@ window.onload = function() {
 
   function createSnake(){
     var length = 5;
-    snakeArray = []
+    snakeArray = [];
     for(var i = length - 1; i>=0; i--) {
       snakeArray.push({x: i, y:0}); //переделать в object
     }
@@ -42,6 +42,9 @@ window.onload = function() {
     var ny = snakeArray[0].y;
 
     if(dir == "right") nx++;
+    if(dir == "left") nx--;
+    if(dir == "down") ny++;
+    if(dir == "up") ny--;
 
     //
     var tail = snakeArray.pop();
@@ -59,14 +62,17 @@ window.onload = function() {
     ctx.fillStyle = "blue";
     ctx.fillRect(x * size, y * size, size, size);
     ctx.strokeStyle = "white";
-    ctx.strokeRect(x * size, y * size, size, size)
+    ctx.strokeRect(x * size, y * size, size, size);
   }
 
   function checkCollapse(){
 
   }
 
-  function control(){
-
-  }
+  addEventListener("keydown", function (event) {
+    if      (event.keyCode == 38 && dir !== "down") dir = "up";
+    else if (event.keyCode == 40 && dir !== "up") dir = "down";
+    else if (event.keyCode == 37 && dir !== "right") dir = "left";
+    else if (event.keyCode == 39 && dir !== "left") dir = "right";
+  })
 }
