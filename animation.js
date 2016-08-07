@@ -4,7 +4,6 @@ window.onload = function() {
   var h = canvas.height;
 
   var score;
-  //var food
   var dir;
   var size = 10;
 
@@ -13,7 +12,7 @@ window.onload = function() {
   function init(){
     dir = "right";
     createSnake();
-    //createFood();
+    createFood();
     score = 0;
 
     if(typeof game_loop != "undefined") clearImmediate(game_loop);
@@ -23,17 +22,19 @@ window.onload = function() {
   init();
 
   function createSnake(){
-    var length = 10;
+    var length = 5;
     snakeArray = [];
     for(var i = length - 1; i>=0; i--) {
       snakeArray.push({x: i, y:0}); //переделать в object
     }
   }
 
-  /*
   function createFood(){
-
-  }*/
+    food = [];
+    var fx = Math.floor(Math.random() * w / size);
+    var fy = Math.floor(Math.random() * h / size);
+    food.push({x: fx, y: fy});
+  }
 
   function paint(){
     ctx.fillStyle = "white";
@@ -53,18 +54,26 @@ window.onload = function() {
     if(dir == "down")  ny++;
     if(dir == "up")    ny--;
 
-    //
-    var tail = snakeArray.pop();
-    tail.x = nx; tail.y = ny;
-    //
-    snakeArray.unshift(tail);
+    if(food[0].x == nx && food[0].y == ny) {
+      score = score + 1;
+      snakeArray.unshift({x: nx, y: ny});
+
+      createFood();
+    } else {
+      var tail = snakeArray.pop();
+      tail.x = nx; tail.y = ny;
+
+      snakeArray.unshift(tail);
+    }
 
     for(var i = 0; i < snakeArray.length; i++) {
       var c = snakeArray[i];
       paintCell(c.x, c.y);
     }
 
-    if(nx * size > w || nx < 0 || ny * size > h || ny < 0 || checkCollapse(nx, ny, snakeArray) ) {
+    paintCell(food[0].x, food[0].y);
+
+    if(nx * size > w - size || nx < 0 || ny * size > h - size || ny < 0 || checkCollapse(nx, ny, snakeArray) ) {
       init();
     }
   }
