@@ -3,7 +3,7 @@ window.onload = function() {
   var w = canvas.width;
   var h = canvas.height;
 
-  var score = 0;
+  var score;
   //var food
   var dir;
   var size = 10;
@@ -13,24 +13,27 @@ window.onload = function() {
   function init(){
     dir = "right";
     createSnake();
-    createFood();
+    //createFood();
     score = 0;
 
-    setInterval(paint, 60);
+    if(typeof game_loop != "undefined") clearImmediate(game_loop);
+    game_loop = setInterval(paint, 60);
+   
   }
   init();
 
   function createSnake(){
-    var length = 5;
+    var length = 10;
     snakeArray = [];
     for(var i = length - 1; i>=0; i--) {
       snakeArray.push({x: i, y:0}); //переделать в object
     }
   }
 
+  /*
   function createFood(){
 
-  }
+  }*/
 
   function paint(){
     ctx.fillStyle = "white";
@@ -38,13 +41,17 @@ window.onload = function() {
     ctx.strokeStyle = "black";
     ctx.strokeRect(0,0,w,h);
 
+    ctx.fillStyle = "blue";
+    ctx.font = "italic 15pt Arial";
+    ctx.fillText("Score: " + score, 10, h - 10);
+
     var nx = snakeArray[0].x;
     var ny = snakeArray[0].y;
 
     if(dir == "right") nx++;
-    if(dir == "left") nx--;
-    if(dir == "down") ny++;
-    if(dir == "up") ny--;
+    if(dir == "left")  nx--;
+    if(dir == "down")  ny++;
+    if(dir == "up")    ny--;
 
     //
     var tail = snakeArray.pop();
@@ -56,6 +63,19 @@ window.onload = function() {
       var c = snakeArray[i];
       paintCell(c.x, c.y);
     }
+
+    if(nx * size > w || nx < 0 || ny * size > h || ny < 0 || checkCollapse(nx, ny, snakeArray) ) {
+      init();
+    }
+  }
+
+  function checkCollapse(x, y, array) {
+     for(var i = 1; i < array.length; i++) {
+        if(array[i].x == x && array[i].y == y) {
+          return true;
+        }
+     }   
+     return false;     
   }
 
   function paintCell(x,y){
@@ -65,14 +85,10 @@ window.onload = function() {
     ctx.strokeRect(x * size, y * size, size, size);
   }
 
-  function checkCollapse(){
-
-  }
-
   addEventListener("keydown", function (event) {
-    if      (event.keyCode == 38 && dir !== "down") dir = "up";
-    else if (event.keyCode == 40 && dir !== "up") dir = "down";
+    if      (event.keyCode == 38 && dir !== "down")  dir = "up";
+    else if (event.keyCode == 40 && dir !== "up")    dir = "down";
     else if (event.keyCode == 37 && dir !== "right") dir = "left";
-    else if (event.keyCode == 39 && dir !== "left") dir = "right";
-  })
+    else if (event.keyCode == 39 && dir !== "left")  dir = "right";
+  });
 }
