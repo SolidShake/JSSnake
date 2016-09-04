@@ -6,7 +6,6 @@ window.onload = function() {
   var score;
   var dir;
   var size = 10;
-
   var snakeArray;
 
   function init(){
@@ -15,17 +14,16 @@ window.onload = function() {
     createFood();
     score = 0;
 
-    if(typeof game_loop != "undefined") clearImmediate(game_loop);
-    game_loop = setInterval(paint, 60);
-   
+    if(typeof game_loop != "undefined") clearInterval(game_loop);
+    game_loop = setInterval(paint, 1000/16);
   }
   init();
 
   function createSnake(){
-    var length = 5;
+    var length = 10;
     snakeArray = [];
     for(var i = length - 1; i>=0; i--) {
-      snakeArray.push({x: i, y:0}); //переделать в object
+      snakeArray.push({x: i, y:0}); 
     }
   }
 
@@ -57,12 +55,10 @@ window.onload = function() {
     if(food[0].x == nx && food[0].y == ny) {
       score = score + 1;
       snakeArray.unshift({x: nx, y: ny});
-
       createFood();
     } else {
       var tail = snakeArray.pop();
       tail.x = nx; tail.y = ny;
-
       snakeArray.unshift(tail);
     }
 
@@ -74,7 +70,14 @@ window.onload = function() {
     paintCell(food[0].x, food[0].y);
 
     if(nx * size > w - size || nx < 0 || ny * size > h - size || ny < 0 || checkCollapse(nx, ny, snakeArray) ) {
-      init();
+      clearInterval(game_loop);
+
+      ctx.fillText("GAME OVER", w/2 - 75, h/2 - 20);
+      ctx.fillText("Press 'Enter' to restart", w/2 - 100, h/2);
+
+      addEventListener("keydown", function (event) {
+      	if (event.keyCode == 13) init();
+      });
     }
   }
 
