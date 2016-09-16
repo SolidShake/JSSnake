@@ -23,7 +23,7 @@ window.onload = function() {
     var length = 10;
     snakeArray = [];
     for(var i = length - 1; i>=0; i--) {
-      snakeArray.push({x: i, y:0}); 
+      snakeArray.push({x: i, y:0});
     }
   }
 
@@ -75,9 +75,13 @@ window.onload = function() {
       ctx.fillText("GAME OVER", w/2 - 75, h/2 - 20);
       ctx.fillText("Press 'Enter' to restart", w/2 - 100, h/2);
 
-      addEventListener("keydown", function (event) {
-      	if (event.keyCode == 13) init();
-      });
+      var handler = function (event) {
+        if(event.keyCode == 13) {
+          document.removeEventListener("keydown", handler);
+          init();
+        }  
+      };
+      document.addEventListener("keydown", handler);
     }
   }
 
@@ -86,8 +90,8 @@ window.onload = function() {
         if(array[i].x == x && array[i].y == y) {
           return true;
         }
-     }   
-     return false;     
+     }
+     return false;
   }
 
   function paintCell(x,y){
@@ -97,7 +101,7 @@ window.onload = function() {
     ctx.strokeRect(x * size, y * size, size, size);
   }
 
-  addEventListener("keydown", function (event) {
+  document.addEventListener("keydown", function (event) {
     if      (event.keyCode == 38 && dir !== "down")  dir = "up";
     else if (event.keyCode == 40 && dir !== "up")    dir = "down";
     else if (event.keyCode == 37 && dir !== "right") dir = "left";
